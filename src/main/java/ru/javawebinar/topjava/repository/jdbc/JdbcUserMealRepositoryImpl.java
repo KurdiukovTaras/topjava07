@@ -59,9 +59,11 @@ public class JdbcUserMealRepositoryImpl implements UserMealRepository {
             Number newKey = insertUserMeal.executeAndReturnKey(map);
             userMeal.setId(newKey.intValue());
         } else {
-            namedParameterJdbcTemplate.update(
-                    "UPDATE meals SET user_id=:user_id, description=:description, " +
-                            "date_time=:date_time, calories=:calories WHERE id=:id", map);
+          if (namedParameterJdbcTemplate.update(
+                    "UPDATE meals SET  description=:description, " +
+                            "date_time=:date_time, calories=:calories WHERE id=:id AND user_id=:user_id", map)==0) {
+              return null;
+          }
         }
         return userMeal;
     }
@@ -70,7 +72,9 @@ public class JdbcUserMealRepositoryImpl implements UserMealRepository {
     public boolean delete(int id, int userId) {return jdbcTemplate.update("DELETE FROM meals WHERE id=? AND user_id=?", id,userId) != 0;}
 
     @Override
-    public UserMeal get(int id, int userId) {List<UserMeal> meals = jdbcTemplate.query("SELECT * FROM meals WHERE id=? AND user_id=?", ROW_MAPPER, id,userId);
+    public UserMeal get(int id, int userId) {
+        List<UserMeal> meals = jdbcTemplate.query(
+                "SELECT * FROM meals WHERE id=? AND user_id=?", ROW_MAPPER, id,userId);
         return DataAccessUtils.singleResult(meals);}
 
     @Override
