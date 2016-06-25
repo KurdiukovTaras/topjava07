@@ -1,27 +1,56 @@
 package ru.javawebinar.topjava.model;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.persistence.*;
+import javax.validation.constraints.Digits;
 import java.time.LocalDateTime;
 
 /**
  * GKislin
  * 11.01.2015.
  */
+
+@NamedQueries({
+        @NamedQuery(name = UserMeal.DELETE, query = "DELETE FROM UserMeal um WHERE um.id=:id"),
+        @NamedQuery(name = UserMeal.ALL_SORTED, query = "SELECT um FROM UserMeal um LEFT JOIN FETCH um.user ORDER BY um.description"),
+})
+@Entity
+@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = "user_id", name = "meals_unique_user_datetime_idx"),
+        @UniqueConstraint(columnNames = "date_time", name = "meals_unique_user_datetime_idx")})
+
 public class UserMeal extends BaseEntity {
 
+    public static final String DELETE = "UserMeal.delete";
+    public static final String ALL_SORTED = "UserMeal.getAllSorted";
+
+
+    @Column (name = "date_time", nullable = false, unique = true,columnDefinition = "timestamp default now()")
+    @NotEmpty
     private LocalDateTime dateTime;
 
+    @Column (name = "description", nullable = false)
+    @NotEmpty
     private String description;
 
+    @Column (name = "calories", nullable = false)
+    @Digits(fraction = 0, integer = 4)
     protected int calories;
 
+    @Column ()
+    @NotEmpty
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+
 
     public UserMeal() {
     }
 
+    public UserMeal(UserMeal um)
+    {
+        this(um.getId(),um.getDateTime(), um.getDescription(), um.getCalories());
+    }
     public UserMeal(LocalDateTime dateTime, String description, int calories) {
         this(null, dateTime, description, calories);
     }
