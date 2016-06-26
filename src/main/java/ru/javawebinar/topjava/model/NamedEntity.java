@@ -2,6 +2,8 @@ package ru.javawebinar.topjava.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
@@ -10,6 +12,7 @@ import javax.persistence.MappedSuperclass;
  * Date: 22.08.2014
  */
 @MappedSuperclass
+@Access(AccessType.FIELD)
 public class NamedEntity extends BaseEntity {
 
     @NotEmpty
