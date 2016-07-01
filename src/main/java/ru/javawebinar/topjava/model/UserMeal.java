@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @NamedQueries({
         @NamedQuery(name = UserMeal.DELETE, query = "DELETE FROM UserMeal um WHERE um.id=:id AND um.user.id=:userId"),
         @NamedQuery(name = UserMeal.ALL_SORTED, query = "SELECT um FROM UserMeal um WHERE um.user.id=:userId ORDER BY um.dateTime DESC"),
-        @NamedQuery(name = UserMeal.GET_BETWEEN, query = "SELECT um FROM UserMeal um WHERE um.dateTime BETWEEN ?1 AND ?2 AND um.user.id = ?3 ORDER BY um.user.id DESC ")
+        @NamedQuery(name = UserMeal.GET_BETWEEN, query = "SELECT um FROM UserMeal um WHERE um.dateTime BETWEEN ?1 AND ?2 AND um.user.id = ?3 ORDER BY um.user.id DESC "),
+        @NamedQuery(name = UserMeal.GET, query = "SELECT um FROM UserMeal um WHERE um.id=?1 AND um.user.id = ?2 ORDER BY um.user.id DESC ")
 })
 @Entity
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = "user_id", name = "meals_unique_user_datetime_idx"),
@@ -26,6 +27,7 @@ public class UserMeal extends BaseEntity {
     public static final String DELETE = "UserMeal.delete";
     public static final String ALL_SORTED = "UserMeal.getAllSorted";
     public static final String GET_BETWEEN = "UserMeal.getBetween";
+    public static final String GET = "UserMeal.get";
 
     @Column (name = "date_time", nullable = false, unique = true,columnDefinition = "timestamp default now()")
     @NotNull

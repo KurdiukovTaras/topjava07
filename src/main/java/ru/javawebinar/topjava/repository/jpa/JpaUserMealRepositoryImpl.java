@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.repository.jpa;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.model.UserMeal;
@@ -46,6 +47,7 @@ public class JpaUserMealRepositoryImpl implements UserMealRepository {
     @Transactional
     public UserMeal save(UserMeal userMeal, int userId) {
         User ref = em.getReference(User.class, userId);
+        Assert.notNull(ref,"чтото неправильно");
         userMeal.setUser(ref);
         if (userMeal.isNew()) {
             em.persist(userMeal);
@@ -63,7 +65,8 @@ public class JpaUserMealRepositoryImpl implements UserMealRepository {
 
     @Override
     public UserMeal get(int id, int userId) {
-       return em.find(UserMeal.class, id);
+//       return em.find(UserMeal.class, id);
+        return em.createNamedQuery(UserMeal.GET, UserMeal.class).setParameter(1, id).setParameter(2,userId).getSingleResult();
     }
 
 
